@@ -6,11 +6,13 @@ import { scrollToSection } from "@/lib/scroll";
 
 const NAV_ITEMS = [
   { id: "home", label: "Home" },
+  { id: "donate", label: "Donate" },
   { id: "live", label: "Live" },
   { id: "friendlies", label: "Friendlies" },
+  { id: "shop", label: "Shop" },
+  { id: "news", label: "News" },
   { id: "stats", label: "Stats" },
   { id: "watchlist", label: "Watch" },
-  { id: "donate", label: "Donate" },
   { id: "fixtures", label: "Fixtures" },
   { id: "groups", label: "Groups" },
   { id: "roadmap", label: "Road to Final" },

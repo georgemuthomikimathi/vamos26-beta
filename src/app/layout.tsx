@@ -24,28 +24,58 @@ export const viewport: Viewport = {
   ],
 };
 
+const SITE_URL = "https://vamos26.com";
+
 export const metadata: Metadata = {
-  title: "VAMOS26 — Live Scores, Stats & World Cup 2026",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "VAMOS26 — Live Scores, Stats & World Cup 2026",
+    template: "%s | VAMOS26",
+  },
   description:
-    "VAMOS26: live World Cup scores, friendly results, stadium guide, stats leaders, players to watch, and host city shop.",
+    "VAMOS26: live World Cup 2026 scores, friendly results, lineups, subs, officials, stadium guide, stats leaders, team news, and official fan tees.",
   keywords: [
     "FIFA World Cup 2026",
     "VAMOS26",
     "live scores",
     "World Cup stadiums",
-    "top scorers",
+    "World Cup lineups",
     "friendly scores",
+    "World Cup fan tees",
+    "USA Mexico Canada World Cup",
   ],
+  alternates: {
+    canonical: SITE_URL,
+  },
   manifest: "/manifest.json",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "VAMOS26",
   },
   openGraph: {
+    type: "website",
+    url: SITE_URL,
     title: "VAMOS26 — FIFA World Cup 2026",
-    description: "Live scores, stats, watchlists, and city-themed shop",
+    description:
+      "Live scores, lineups, team news, stats, and nation-themed fan tees for World Cup 2026.",
     siteName: "VAMOS26",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VAMOS26 — FIFA World Cup 2026",
+    description: "Live scores, stats, team news & official fan tees",
   },
   other: {
     "mobile-web-app-capable": "yes",

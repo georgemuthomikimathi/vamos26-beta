@@ -5,10 +5,13 @@ import { Clock, MapPin, ChevronDown, Users } from "lucide-react";
 import type { Match } from "@/lib/scores/types";
 import { formatScore, isPreMatch } from "@/lib/scores/types";
 import { getSquad } from "@/lib/squads";
+import { getMatchMeta } from "@/lib/match-meta";
 import TeamFlagWithFallback from "@/components/TeamFlag";
 import FriendlyLineup from "@/components/FriendlyLineup";
+import MatchSubsPanel from "@/components/MatchSubsPanel";
+import MatchOfficialsPanel from "@/components/MatchOfficialsPanel";
 
-type Tab = "summary" | "lineups";
+type Tab = "summary" | "lineups" | "subs" | "officials";
 
 function StatusBadge({ match }: { match: Match }) {
   const { status, minute } = match;
@@ -45,6 +48,7 @@ export default function FriendlyMatchCard({ match, defaultExpanded = false }: Fr
   const awaySquad = getSquad(match.away.code);
   const scoreDisplay = formatScore(match.score);
   const hasLineups = Boolean(homeSquad && awaySquad);
+  const meta = getMatchMeta(match.id);
 
   const openLineup = (side: "home" | "away") => {
     setFocusTeam((t) => (t === side ? null : side));
@@ -134,20 +138,30 @@ export default function FriendlyMatchCard({ match, defaultExpanded = false }: Fr
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-4 border-t border-white/10">
-            <div className="flex gap-1 mt-3 mb-3">
-              {(["summary", "lineups"] as const).map((t) => (
+            <div className="flex flex-wrap gap-1 mt-3 mb-3">
+              {(
+                [
+                  { id: "summary" as const, label: "Match" },
+                  { id: "lineups" as const, label: "Lineups" },
+                  { id: "subs" as const, label: "Subs" },
+                  { id: "officials" as const, label: "Officials" },
+                ] as const
+              ).map(({ id, label }) => (
                 <button
-                  key={t}
+                  key={id}
                   type="button"
-                  onClick={() => setTab(t)}
-                  disabled={t === "lineups" && !hasLineups}
+                  onClick={() => setTab(id)}
+                  disabled={
+                    (id === "lineups" && !hasLineups) ||
+                    ((id === "subs" || id === "officials") && !meta)
+                  }
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide border transition-colors ${
-                    tab === t
+                    tab === id
                       ? "bg-gold/15 border-gold/40 text-gold"
                       : "border-white/10 text-muted hover:text-white disabled:opacity-40"
                   }`}
                 >
-                  {t === "summary" ? "Match" : "Lineups"}
+                  {label}
                 </button>
               ))}
             </div>
@@ -194,15 +208,17 @@ export default function FriendlyMatchCard({ match, defaultExpanded = false }: Fr
 
             {tab === "lineups" && hasLineups && homeSquad && awaySquad && (
               <div className="grid sm:grid-cols-2 gap-3">
-                <FriendlyLineup
-                  squad={homeSquad}
-                  highlight={focusTeam === "home"}
-                />
-                <FriendlyLineup
-                  squad={awaySquad}
-                  highlight={focusTeam === "away"}
-                />
+                <FriendlyLineup squad={homeSquad} highlight={focusTeam === "home"} />
+                <FriendlyLineup squad={awaySquad} highlight={focusTeam === "away"} />
               </div>
+            )}
+
+            {tab === "subs" && meta && (
+              <MatchSubsPanel match={match} meta={meta} />
+            )}
+
+            {tab === "officials" && meta && (
+              <MatchOfficialsPanel match={match} meta={meta} />
             )}
           </div>
         </div>

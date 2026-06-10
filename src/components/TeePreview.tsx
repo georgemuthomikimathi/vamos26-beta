@@ -35,10 +35,12 @@ const TEXT_COLOR: Record<TeeColor, string> = {
 function TeeShape({
   fill,
   color,
+  accent,
   children,
 }: {
   fill: string;
   color: TeeColor;
+  accent: string;
   children: ReactNode;
 }) {
   const stroke =
@@ -48,12 +50,21 @@ function TeeShape({
 
   return (
     <>
+      {/* Body */}
       <path
         d="M70 72 L40 100 L58 112 L70 96 L70 280 L210 280 L210 96 L222 112 L240 100 L210 72 Q140 58 70 72Z"
         fill={fill}
         stroke={stroke}
         strokeWidth="1.5"
       />
+      {/* Left sleeve */}
+      <path
+        d="M70 96 L40 100 L32 132 L62 126 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth="1"
+      />
+      {/* Right sleeve */}
       <path
         d="M210 96 L240 100 L248 130 L220 125 Z"
         fill={fill}
@@ -64,8 +75,42 @@ function TeeShape({
         }
         strokeWidth="1"
       />
+      {/* Country-color shoulder trim */}
+      <path
+        d="M72 74 Q140 62 208 74"
+        fill="none"
+        stroke={accent}
+        strokeWidth="3"
+        opacity="0.85"
+      />
+      <path
+        d="M74 280 L206 280"
+        fill="none"
+        stroke={accent}
+        strokeWidth="2"
+        opacity="0.45"
+      />
       {children}
     </>
+  );
+}
+
+function Vamos26Sleeve({ accent }: { accent: string }) {
+  return (
+    <g transform="translate(46, 108) rotate(-72)">
+      <text
+        x="0"
+        y="0"
+        fill={accent}
+        fontSize="7"
+        fontWeight="700"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontStyle="italic"
+        letterSpacing="0.14em"
+      >
+        VAMOS26
+      </text>
+    </g>
   );
 }
 
@@ -81,6 +126,44 @@ function Trophy({ accent }: { accent: string }) {
       <path
         d="M26 14 C30 14 32 18 32 22 C32 26 28 28 26 28 L24 22 C26 20 26 17 26 14Z"
         fill={accent}
+      />
+    </g>
+  );
+}
+
+function FlagBadge({
+  flagCode,
+  x,
+  y,
+  size,
+}: {
+  flagCode: string;
+  x: number;
+  y: number;
+  size: number;
+}) {
+  return (
+    <g>
+      <circle cx={x + size / 2} cy={y + size / 2} r={size / 2 + 2} fill="rgba(0,0,0,0.08)" />
+      <clipPath id={`flag-clip-${flagCode}-${x}`}>
+        <circle cx={x + size / 2} cy={y + size / 2} r={size / 2} />
+      </clipPath>
+      <image
+        href={`/flags/1x1/${flagCode}.svg`}
+        x={x}
+        y={y}
+        width={size}
+        height={size}
+        clipPath={`url(#flag-clip-${flagCode}-${x})`}
+        preserveAspectRatio="xMidYMid slice"
+      />
+      <circle
+        cx={x + size / 2}
+        cy={y + size / 2}
+        r={size / 2}
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        strokeWidth="1"
       />
     </g>
   );
@@ -102,116 +185,97 @@ export default function TeePreview({
   if (side === "back") {
     return (
       <svg viewBox="0 0 280 320" className={className} aria-hidden>
-        <TeeShape fill={fill} color={color}>
+        <defs>
+          <linearGradient id={`tee-back-glow-${flagCode}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={accent} stopOpacity="0.15" />
+            <stop offset="100%" stopColor={accent} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <TeeShape fill={fill} color={color} accent={accent}>
+          <rect x="90" y="118" width="100" height="120" fill={`url(#tee-back-glow-${flagCode})`} rx="8" />
+          <Vamos26Sleeve accent={accent} />
           <text
             x="140"
-            y="138"
+            y="132"
             textAnchor="middle"
             fill={text}
-            fontSize="14"
+            fontSize="15"
             fontWeight="800"
             fontFamily="system-ui, sans-serif"
-            letterSpacing="0.06em"
+            letterSpacing="0.08em"
           >
-            {backLabel.slice(0, 18).toUpperCase()}
+            {backLabel.slice(0, 16).toUpperCase()}
           </text>
           <text
             x="140"
-            y="162"
+            y="152"
             textAnchor="middle"
             fill={accent}
             fontSize="9"
             fontWeight="600"
             fontFamily="system-ui, sans-serif"
-            letterSpacing="0.04em"
+            letterSpacing="0.05em"
           >
-            {backSlogan.slice(0, 32)}
+            {backSlogan.slice(0, 34)}
           </text>
           <line
             x1="108"
-            y1="172"
+            y1="162"
             x2="172"
-            y2="172"
+            y2="162"
             stroke={accent}
-            strokeWidth="1.5"
-            opacity="0.5"
+            strokeWidth="2"
+            opacity="0.6"
           />
-          <image
-            href={`/flags/1x1/${flagCode}.svg`}
-            x="118"
-            y="182"
-            width="44"
-            height="44"
-            preserveAspectRatio="xMidYMid slice"
-          />
-          <rect
-            x="118"
-            y="182"
-            width="44"
-            height="44"
-            rx="4"
-            fill="none"
-            stroke={text}
-            strokeWidth="1"
-            opacity="0.25"
-          />
+          <FlagBadge flagCode={flagCode} x={114} y={172} size={52} />
         </TeeShape>
       </svg>
     );
   }
 
+  const line1 = phrase.split(" — ")[0]?.slice(0, 20) ?? phrase.slice(0, 20);
+  const line2 = phrase.includes(" — ")
+    ? phrase.split(" — ")[1]?.slice(0, 22)
+    : phrase.split(" ").slice(-3).join(" ");
+
   return (
     <svg viewBox="0 0 280 320" className={className} aria-hidden>
-      <TeeShape fill={fill} color={color}>
+      <TeeShape fill={fill} color={color} accent={accent}>
+        <Vamos26Sleeve accent={accent} />
         <Trophy accent={accent} />
+        <FlagBadge flagCode={flagCode} x={126} y={118} size={28} />
         <text
           x="140"
-          y="155"
+          y="158"
           textAnchor="middle"
           fill={text}
-          fontSize="11"
+          fontSize="10"
           fontWeight="800"
           fontFamily="system-ui, sans-serif"
-          letterSpacing="0.08em"
+          letterSpacing="0.1em"
         >
-          {phrase.split(" — ")[0]?.slice(0, 22)}
+          {line1}
         </text>
-        {phrase.includes(" — ") && (
-          <text
-            x="140"
-            y="172"
-            textAnchor="middle"
-            fill={accent}
-            fontSize="9"
-            fontWeight="700"
-            fontFamily="system-ui, sans-serif"
-            letterSpacing="0.12em"
-          >
-            {phrase.split(" — ")[1]?.slice(0, 24)}
-          </text>
-        )}
-        {!phrase.includes(" — ") && (
-          <text
-            x="140"
-            y="172"
-            textAnchor="middle"
-            fill={text}
-            fontSize="9"
-            fontWeight="600"
-            fontFamily="system-ui, sans-serif"
-            opacity="0.7"
-          >
-            {phrase.split(" ").slice(-3).join(" ")}
-          </text>
-        )}
+        <text
+          x="140"
+          y="174"
+          textAnchor="middle"
+          fill={accent}
+          fontSize="8.5"
+          fontWeight="700"
+          fontFamily="system-ui, sans-serif"
+          letterSpacing="0.12em"
+        >
+          {line2}
+        </text>
         <line
-          x1="100"
-          y1="185"
-          x2="180"
-          y2="185"
+          x1="98"
+          y1="186"
+          x2="182"
+          y2="186"
           stroke={accent}
-          strokeWidth="2"
-          opacity="0.6"
+          strokeWidth="2.5"
+          opacity="0.7"
         />
       </TeeShape>
     </svg>

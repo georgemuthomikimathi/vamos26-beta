@@ -3,11 +3,11 @@
 import { scrollToSection } from "@/lib/scroll";
 
 const QUICK_LINKS = [
+  { id: "donate", label: "Donate" },
   { id: "live", label: "Live" },
   { id: "friendlies", label: "Friendlies" },
-  { id: "stats", label: "Stats" },
-  { id: "watchlist", label: "Watch" },
-  { id: "donate", label: "Donate" },
+  { id: "shop", label: "Shop" },
+  { id: "news", label: "News" },
   { id: "discover", label: "NYC" },
 ] as const;
 

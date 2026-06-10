@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Clock, MapPin, ChevronDown } from "lucide-react";
 import type { Match } from "@/lib/scores/types";
 import { formatScore, isPreMatch } from "@/lib/scores/types";
+import { getMatchMeta } from "@/lib/match-meta";
 import TeamFlagWithFallback from "@/components/TeamFlag";
+import MatchOfficialsPanel from "@/components/MatchOfficialsPanel";
+import MatchSubsPanel from "@/components/MatchSubsPanel";
 
 function StatusBadge({ match }: { match: Match }) {
   const { status, minute } = match;
@@ -39,14 +42,19 @@ type MatchCardProps = {
   showCompetition?: boolean;
 };
 
+type DetailTab = "info" | "subs" | "officials";
+
 export default function MatchCard({ match, compact = true, showCompetition }: MatchCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [detailTab, setDetailTab] = useState<DetailTab>("info");
   const isLive = match.status === "live" || match.status === "halftime";
   const scoreDisplay = formatScore(match.score);
+  const meta = getMatchMeta(match.id);
   const hasDetails =
     Boolean(match.venue) ||
     Boolean(match.time) ||
-    (match.events && match.events.length > 0);
+    (match.events && match.events.length > 0) ||
+    Boolean(meta);
 
   return (
     <article
@@ -134,30 +142,70 @@ export default function MatchCard({ match, compact = true, showCompetition }: Ma
       >
         <div className="overflow-hidden">
           <div className="pt-3 border-t border-white/10 space-y-3">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-              <span className="flex items-center gap-1">
-                <Clock size={12} className="text-pitch" />
-                {match.time}
-              </span>
-              <span className="flex items-center gap-1 min-w-0">
-                <MapPin size={12} className="text-pitch shrink-0" />
-                <span className="truncate">
-                  {match.venue} · {match.city}
-                </span>
-              </span>
-            </div>
-
-            {match.events && match.events.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {match.events.map((e, j) => (
-                  <span
-                    key={j}
-                    className="text-xs bg-white/5 rounded-full px-3 py-1.5 text-muted"
+            {meta && (
+              <div className="flex flex-wrap gap-1">
+                {(
+                  [
+                    { id: "info" as const, label: "Info" },
+                    { id: "subs" as const, label: "Subs" },
+                    { id: "officials" as const, label: "Officials" },
+                  ] as const
+                ).map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDetailTab(id);
+                    }}
+                    className={`px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border transition-colors ${
+                      detailTab === id
+                        ? "bg-pitch/15 border-pitch/40 text-pitch"
+                        : "border-white/10 text-muted hover:text-white"
+                    }`}
                   >
-                    {e.minute}&apos; ⚽ {e.player}
-                  </span>
+                    {label}
+                  </button>
                 ))}
               </div>
+            )}
+
+            {detailTab === "info" && (
+              <>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+                  <span className="flex items-center gap-1">
+                    <Clock size={12} className="text-pitch" />
+                    {match.time}
+                  </span>
+                  <span className="flex items-center gap-1 min-w-0">
+                    <MapPin size={12} className="text-pitch shrink-0" />
+                    <span className="truncate">
+                      {match.venue} · {match.city}
+                    </span>
+                  </span>
+                </div>
+
+                {match.events && match.events.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {match.events.map((e, j) => (
+                      <span
+                        key={j}
+                        className="text-xs bg-white/5 rounded-full px-3 py-1.5 text-muted"
+                      >
+                        {e.minute}&apos; ⚽ {e.player}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {detailTab === "subs" && meta && (
+              <MatchSubsPanel match={match} meta={meta} />
+            )}
+
+            {detailTab === "officials" && meta && (
+              <MatchOfficialsPanel match={match} meta={meta} />
             )}
           </div>
         </div>
