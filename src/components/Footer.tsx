@@ -14,8 +14,8 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-8 h-5 rounded-sm bg-canada-red" title="Canada" />
             <div className="w-8 h-5 rounded-sm bg-usa-blue" title="USA" />
+            <div className="w-8 h-5 rounded-sm bg-canada-red" title="Canada" />
             <div className="w-8 h-5 rounded-sm bg-mexico-green" title="Mexico" />
           </div>
 

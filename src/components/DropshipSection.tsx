@@ -2,15 +2,53 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingBag, Star, Truck, ExternalLink, MapPin } from "lucide-react";
-import { CITY_PRODUCTS, DROPSHIP_PARTNERS } from "@/lib/dropship";
+import { ShoppingBag, Star, Truck, ExternalLink, MapPin, Shirt } from "lucide-react";
+import { TEE_PRODUCTS, DROPSHIP_PARTNERS, type TeeColor } from "@/lib/dropship";
+import TeePreview from "@/components/TeePreview";
+import TeamFlagWithFallback from "@/components/TeamFlag";
+
+const COLOR_FILTERS: Array<{ id: "all" | TeeColor; label: string; swatch?: string }> = [
+  { id: "all", label: "All Colors" },
+  { id: "white", label: "White Tees", swatch: "bg-white border border-white/30" },
+  { id: "yellow", label: "Yellow Tees", swatch: "bg-yellow-400" },
+  { id: "navy", label: "Navy Tees", swatch: "bg-slate-800" },
+  { id: "red", label: "Red Tees", swatch: "bg-red-600" },
+  { id: "orange", label: "Orange Tees", swatch: "bg-orange-500" },
+  { id: "skyblue", label: "Sky Blue Tees", swatch: "bg-sky-300" },
+  { id: "green", label: "Green Tees", swatch: "bg-green-500" },
+];
+
+const TEE_CARD_BG: Record<TeeColor, string> = {
+  white: "bg-gradient-to-b from-white/5 to-navy",
+  yellow: "bg-gradient-to-b from-yellow-400/10 to-navy",
+  navy: "bg-gradient-to-b from-blue-900/20 to-navy",
+  red: "bg-gradient-to-b from-red-500/10 to-navy",
+  orange: "bg-gradient-to-b from-orange-500/10 to-navy",
+  skyblue: "bg-gradient-to-b from-sky-400/10 to-navy",
+  green: "bg-gradient-to-b from-green-500/10 to-navy",
+};
+
+const TEE_BADGE_CLASS: Record<TeeColor, string> = {
+  white: "bg-white/90 text-navy border-white/50",
+  yellow: "bg-yellow-400/90 text-navy border-yellow-500",
+  navy: "bg-slate-800/90 text-white border-slate-600",
+  red: "bg-red-600/90 text-white border-red-500",
+  orange: "bg-orange-500/90 text-navy border-orange-400",
+  skyblue: "bg-sky-300/90 text-navy border-sky-400",
+  green: "bg-green-500/90 text-white border-green-400",
+};
 
 export default function DropshipSection() {
   const [filter, setFilter] = useState<string>("all");
+  const [colorFilter, setColorFilter] = useState<"all" | TeeColor>("all");
 
-  const states = ["all", ...new Set(CITY_PRODUCTS.map((p) => p.state))];
-  const filtered =
-    filter === "all" ? CITY_PRODUCTS : CITY_PRODUCTS.filter((p) => p.state === filter);
+  const states = ["all", ...new Set(TEE_PRODUCTS.map((p) => p.state))];
+
+  const filtered = TEE_PRODUCTS.filter((p) => {
+    const matchState = filter === "all" || p.state === filter;
+    const matchColor = colorFilter === "all" || p.teeColor === colorFilter;
+    return matchState && matchColor;
+  });
 
   return (
     <section id="shop" className="relative py-24 bg-navy overflow-hidden">
@@ -24,18 +62,19 @@ export default function DropshipSection() {
           className="text-center mb-12"
         >
           <p className="text-gold uppercase tracking-[0.4em] text-xs font-semibold mb-3">
-            US Host City Gear
+            Official Fan Tees
           </p>
           <h2 className="font-display text-5xl md:text-7xl text-white mb-4">
-            CITY <span className="text-gradient-gold">SHOP</span>
+            CITY & <span className="text-gradient-gold">NATION</span> TEES
           </h2>
           <p className="text-muted max-w-2xl mx-auto">
-            Empire State, Garden State, Magic City & more — themed merch from
-            vetted US dropshippers with 4.5+ ratings and 2–7 day domestic shipping.
+            Catchy phrases on the chest, FIFA trophy on the right sleeve. Flip
+            any tee to see the back — city or country name, slogan, and flag.
+            White tees for US host cities; nation kits in authentic team colors.
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap gap-2 justify-center mb-10">
+        <div className="flex flex-wrap gap-2 justify-center mb-4">
           {states.map((s) => (
             <button
               key={s}
@@ -46,12 +85,29 @@ export default function DropshipSection() {
                   : "border-white/10 text-muted hover:text-white hover:bg-white/5"
               }`}
             >
-              {s === "all" ? "All Cities" : s}
+              {s === "all" ? "All" : s === "INTL" ? "Nations" : s}
             </button>
           ))}
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-16">
+        <div className="flex flex-wrap gap-2 justify-center mb-10">
+          {COLOR_FILTERS.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setColorFilter(c.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex items-center gap-1.5 ${
+                colorFilter === c.id
+                  ? "bg-white/10 border-white/30 text-white"
+                  : "border-white/10 text-muted hover:text-white"
+              }`}
+            >
+              {c.swatch && <span className={`w-3 h-3 rounded-full ${c.swatch}`} />}
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
           {filtered.map((product, i) => (
             <motion.div
               key={product.id}
@@ -59,31 +115,89 @@ export default function DropshipSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.04 }}
-              className="group bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-gold/30 transition-all hover:shadow-lg hover:shadow-gold/5"
+              className="group bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-gold/30 transition-all hover:shadow-xl hover:shadow-gold/10"
             >
               <div
-                className={`h-36 bg-gradient-to-br ${product.gradient} relative flex items-center justify-center`}
+                className={`relative h-52 overflow-hidden ${TEE_CARD_BG[product.teeColor]}`}
               >
-                <ShoppingBag size={48} className="text-white/20" />
+                <div className="tee-flip h-full w-full" tabIndex={0}>
+                  <div className="tee-flip-inner">
+                    <div className="tee-flip-face">
+                      <TeePreview
+                        side="front"
+                        color={product.teeColor}
+                        phrase={product.phrase}
+                        accent={product.accent}
+                        className="h-44 w-auto drop-shadow-2xl"
+                      />
+                    </div>
+                    <div className="tee-flip-face tee-flip-back">
+                      <TeePreview
+                        side="back"
+                        color={product.teeColor}
+                        phrase={product.phrase}
+                        accent={product.accent}
+                        backLabel={product.backLabel}
+                        backSlogan={product.backSlogan}
+                        flagCode={product.flagCode}
+                        className="h-44 w-auto drop-shadow-2xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {product.badge && (
-                  <span className="absolute top-3 left-3 bg-gold text-navy text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full">
+                  <span className="absolute top-3 left-3 bg-gold text-navy text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full z-10">
                     {product.badge}
                   </span>
                 )}
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-1.5 text-[10px] text-muted mb-2">
-                  <MapPin size={10} className="text-pitch" />
-                  {product.city}, {product.state} · {product.theme}
+
+                <span
+                  className={`absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border z-10 ${TEE_BADGE_CLASS[product.teeColor]}`}
+                >
+                  {product.teeColor} tee
+                </span>
+
+                <div className="absolute bottom-2 left-3 text-[9px] text-muted uppercase tracking-wider z-10">
+                  Hover to flip
                 </div>
-                <h3 className="font-display text-xl text-white group-hover:text-gold transition-colors">
+                <div className="absolute bottom-2 right-3 flex items-center gap-1 text-[9px] text-gold/80 uppercase tracking-wider z-10">
+                  <Shirt size={10} />
+                  Trophy · right sleeve
+                </div>
+              </div>
+
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  {product.countryCode && (
+                    <TeamFlagWithFallback
+                      code={product.countryCode}
+                      name={product.theme}
+                      size={40}
+                    />
+                  )}
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted min-w-0">
+                    <MapPin size={10} className="text-pitch shrink-0" />
+                    <span className="truncate">
+                      {product.category === "country" ? product.theme : `${product.city}, ${product.state}`}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="font-display text-lg text-gold leading-tight tracking-wide mb-1">
+                  &ldquo;{product.phrase}&rdquo;
+                </p>
+
+                <h3 className="font-semibold text-white text-sm group-hover:text-pitch transition-colors">
                   {product.name}
                 </h3>
-                <p className="text-xs text-muted mt-2 leading-relaxed">{product.tagline}</p>
+                <p className="text-xs text-muted mt-1.5 leading-relaxed">{product.tagline}</p>
+
                 <div className="flex items-center justify-between mt-4">
                   <span className="font-display text-2xl text-pitch">${product.price}</span>
                   <span className="text-[10px] text-muted">via {product.partner}</span>
                 </div>
+
                 <button className="w-full mt-4 bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold rounded-xl py-2.5 text-sm font-semibold transition-colors flex items-center justify-center gap-2">
                   <ShoppingBag size={16} />
                   Add to Cart
@@ -124,7 +238,6 @@ export default function DropshipSection() {
                   <Truck size={12} className="text-pitch" />
                   {partner.avgShipDays}
                 </div>
-                <p className="text-[10px] text-muted leading-relaxed">{partner.usFulfillment}</p>
                 <p className="text-xs text-pitch/80 mt-2">{partner.specialty}</p>
               </a>
             ))}

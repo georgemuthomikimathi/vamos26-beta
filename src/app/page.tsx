@@ -1,75 +1,61 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
+import SectionQuickNav from "@/components/SectionQuickNav";
+import BackToTop from "@/components/BackToTop";
 import Hero from "@/components/Hero";
 import LiveMatchCenter from "@/components/LiveMatchCenter";
+import FriendlyScores from "@/components/FriendlyScores";
+import AppBottomNav from "@/components/AppBottomNav";
 import StadiumsSection from "@/components/StadiumsSection";
 import StatsLeaders from "@/components/StatsLeaders";
-import WatchlistSection from "@/components/WatchlistSection";
+import DonateSection from "@/components/DonateSection";
 import DropshipSection from "@/components/DropshipSection";
 import UpcomingMatches from "@/components/UpcomingMatches";
 import GroupsSection from "@/components/GroupsSection";
 import RoadToFinal from "@/components/RoadToFinal";
 import TrophyBallSection from "@/components/TrophyBallSection";
-import PlayersSection from "@/components/PlayersSection";
 import DiscoverSection from "@/components/DiscoverSection";
 import Footer from "@/components/Footer";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 const SECTIONS = [
   "home",
   "live",
+  "friendlies",
   "stadiums",
   "stats",
-  "watchlist",
+  "donate",
   "shop",
   "fixtures",
   "groups",
   "roadmap",
   "trophy",
-  "stars",
   "discover",
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("home");
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveTab(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
-    );
-
-    SECTIONS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const [activeTab, setActiveTab] = useScrollSpy(SECTIONS, "home");
 
   return (
     <main className="min-h-screen">
       <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
-      <Hero />
+      <SectionQuickNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <Hero onNavigate={setActiveTab} />
       <LiveMatchCenter />
+      <FriendlyScores />
       <StadiumsSection />
       <StatsLeaders />
-      <WatchlistSection />
+      <DonateSection />
       <DropshipSection />
       <UpcomingMatches />
       <GroupsSection />
       <RoadToFinal />
       <TrophyBallSection />
-      <PlayersSection />
       <DiscoverSection />
       <Footer />
+      <AppBottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BackToTop />
     </main>
   );
 }

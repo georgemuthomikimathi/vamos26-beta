@@ -1,31 +1,15 @@
-export type MatchStatus = "scheduled" | "live" | "halftime" | "finished";
+import type { Match } from "@/lib/scores/types";
+import { getLiveCount as countLive } from "@/lib/scores/types";
 
-export type LiveScore = {
-  home: number;
-  away: number;
-};
+export type { Match, MatchStatus, Score } from "@/lib/scores/types";
+export type LiveMatch = Match;
 
-export type LiveMatch = {
-  id: string;
-  status: MatchStatus;
-  minute?: number;
-  date: string;
-  time: string;
-  home: { name: string; code: string };
-  away: { name: string; code: string };
-  venue: string;
-  city: string;
-  stage: string;
-  score: LiveScore;
-  events?: { minute: number; type: "goal" | "yellow" | "red"; player: string; team: "home" | "away" }[];
-};
-
-/** Seed data — swap via /api/live when tournament kicks off */
-export const LIVE_MATCHES: LiveMatch[] = [
+/** World Cup 2026 fixtures — 0-0 until tournament kicks off */
+export const LIVE_MATCHES: Match[] = [
   {
     id: "m1",
-    status: "live",
-    minute: 67,
+    competition: "world-cup",
+    status: "scheduled",
     date: "Jun 11",
     time: "3:00 PM ET",
     home: { name: "Mexico", code: "mx" },
@@ -33,17 +17,12 @@ export const LIVE_MATCHES: LiveMatch[] = [
     venue: "Estadio Azteca",
     city: "Mexico City",
     stage: "Group A · Opening Match",
-    score: { home: 2, away: 1 },
-    events: [
-      { minute: 23, type: "goal", player: "Lozano", team: "home" },
-      { minute: 41, type: "goal", player: "Promes", team: "away" },
-      { minute: 58, type: "goal", player: "Giménez", team: "home" },
-    ],
+    score: { home: 0, away: 0 },
   },
   {
     id: "m2",
-    status: "halftime",
-    minute: 45,
+    competition: "world-cup",
+    status: "scheduled",
     date: "Jun 12",
     time: "6:00 PM ET",
     home: { name: "Canada", code: "ca" },
@@ -51,11 +30,11 @@ export const LIVE_MATCHES: LiveMatch[] = [
     venue: "BMO Field",
     city: "Toronto",
     stage: "Group B",
-    score: { home: 1, away: 0 },
-    events: [{ minute: 34, type: "goal", player: "Davies", team: "home" }],
+    score: { home: 0, away: 0 },
   },
   {
     id: "m3",
+    competition: "world-cup",
     status: "scheduled",
     date: "Jun 12",
     time: "9:00 PM ET",
@@ -68,7 +47,8 @@ export const LIVE_MATCHES: LiveMatch[] = [
   },
   {
     id: "m4",
-    status: "finished",
+    competition: "world-cup",
+    status: "scheduled",
     date: "Jun 13",
     time: "3:00 PM ET",
     home: { name: "Brazil", code: "br" },
@@ -76,16 +56,11 @@ export const LIVE_MATCHES: LiveMatch[] = [
     venue: "Mercedes-Benz Stadium",
     city: "Atlanta",
     stage: "Group C",
-    score: { home: 3, away: 1 },
-    events: [
-      { minute: 12, type: "goal", player: "Vinícius Jr", team: "home" },
-      { minute: 55, type: "goal", player: "Ziyech", team: "away" },
-      { minute: 71, type: "goal", player: "Rodrygo", team: "home" },
-      { minute: 88, type: "goal", player: "Paquetá", team: "home" },
-    ],
+    score: { home: 0, away: 0 },
   },
   {
     id: "m5",
+    competition: "world-cup",
     status: "scheduled",
     date: "Jun 14",
     time: "8:00 PM ET",
@@ -99,5 +74,5 @@ export const LIVE_MATCHES: LiveMatch[] = [
 ];
 
 export function getLiveCount(): number {
-  return LIVE_MATCHES.filter((m) => m.status === "live" || m.status === "halftime").length;
+  return countLive(LIVE_MATCHES);
 }

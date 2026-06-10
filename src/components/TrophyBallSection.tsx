@@ -130,8 +130,8 @@ export default function TrophyBallSection() {
                 host nations coming together for the first time.
               </p>
               <div className="flex gap-3 mt-6">
-                <div className="w-10 h-10 rounded-full bg-canada-red border-2 border-white/20" title="Canada" />
                 <div className="w-10 h-10 rounded-full bg-usa-blue border-2 border-white/20" title="USA" />
+                <div className="w-10 h-10 rounded-full bg-canada-red border-2 border-white/20" title="Canada" />
                 <div className="w-10 h-10 rounded-full bg-mexico-green border-2 border-white/20" title="Mexico" />
               </div>
             </div>

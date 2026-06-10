@@ -8,6 +8,7 @@ export type WatchPlayer = {
   tagline: string;
   gradient: string;
   stat: string;
+  image?: string;
 };
 
 export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
@@ -21,6 +22,7 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Imperious in the air — anchors Les Bleus",
     gradient: "from-blue-600 to-red-600",
     stat: "92% duel success",
+    image: "/images/players/william-saliba.jpg",
   },
   {
     name: "Virgil van Dijk",
@@ -32,6 +34,7 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     tagline: "The colossus — organizes every line",
     gradient: "from-orange-500 to-blue-700",
     stat: "0 goals conceded in 180 min",
+    image: "/images/players/virgil-van-dijk.jpg",
   },
   {
     name: "António Rüdiger",
@@ -43,6 +46,7 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Warrior mentality, world-class recovery pace",
     gradient: "from-yellow-500 to-red-700",
     stat: "12 clearances / match",
+    image: "/images/players/antonio-rudiger.jpg",
   },
   {
     name: "Marquinhos",
@@ -54,6 +58,7 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Captain calm — reads the game two passes ahead",
     gradient: "from-green-600 to-yellow-400",
     stat: "3 clean sheet matches",
+    image: "/images/players/marquinhos.jpg",
   },
   {
     name: "Cristian Romero",
@@ -65,6 +70,7 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Aggressive presser, fearless in duels",
     gradient: "from-sky-400 to-blue-800",
     stat: "Most tackles in R16",
+    image: "/images/players/cristian-romero.jpg",
   },
   {
     name: "Alphonso Davies",
@@ -73,9 +79,10 @@ export const DEFENDERS_TO_WATCH: WatchPlayer[] = [
     position: "LB",
     club: "Bayern Munich",
     number: 19,
-    tagline: "The fastest fullback on the planet",
+    tagline: "African-Canadian pace merchant — flies down the left",
     gradient: "from-red-600 to-white",
     stat: "36.5 km/h top speed",
+    image: "/images/players/alphonso-davies.jpg",
   },
 ];
 
@@ -90,6 +97,7 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Liverpool's new maestro — leads all assists",
     gradient: "from-yellow-500 to-red-700",
     stat: "4 assists · 2 goals",
+    image: "/images/players/florian-wirtz.jpg",
   },
   {
     name: "Pedri",
@@ -101,6 +109,7 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Metronome of La Roja — controls tempo",
     gradient: "from-red-600 to-yellow-400",
     stat: "94% pass accuracy",
+    image: "/images/players/pedri.jpg",
   },
   {
     name: "Jude Bellingham",
@@ -112,6 +121,7 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Box-to-box brilliance with end product",
     gradient: "from-blue-800 to-red-600",
     stat: "3 G/A in 4 matches",
+    image: "/images/players/jude-bellingham.jpg",
   },
   {
     name: "Lamine Yamal",
@@ -123,6 +133,7 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Teenage genius — fearlessly takes on anyone",
     gradient: "from-red-600 to-yellow-400",
     stat: "12 successful dribbles",
+    image: "/images/players/lamine-yamal.jpg",
   },
   {
     name: "Kevin De Bruyne",
@@ -134,6 +145,7 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "The ultimate final-third passer",
     gradient: "from-red-600 to-yellow-400",
     stat: "3 key passes / 90",
+    image: "/images/players/kevin-de-bruyne.jpg",
   },
   {
     name: "Mohamed Salah",
@@ -145,5 +157,6 @@ export const PLAYMAKERS_TO_WATCH: WatchPlayer[] = [
     tagline: "Left foot of gold — creates from nothing",
     gradient: "from-red-700 to-white",
     stat: "2 goals · 2 assists",
+    image: "/images/players/mohamed-salah.jpg",
   },
 ];
